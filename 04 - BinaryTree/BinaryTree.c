@@ -77,6 +77,95 @@ void printTree(BTREE root, int level) {
     printTree(root->left, level + 1);
 }
 
+	int depth_nodes(BTREE root, int depth){
+		if(root == NULL)
+			return 0;
+		if(depth==0)
+			return 1;
+		else{
+			return depth_nodes(root->left,depth-1) + depth_nodes(root->right,depth-1);
+		}		
+	}
+	
+	void mirror(BTREE root){
+		if(root == NULL)
+			return;
+		else{
+			BTREE temp;
+			temp = root->left;
+			root->left = root->right;
+			root->right = temp;
+			mirror(root->left);
+			mirror(root->right);
+		}	
+	}
+	
+	BTREE Delete(BTREE root,int x){
+	BTREE p,q;
+	if(root==NULL)
+		return NULL;
+	if(root->data ==x ){
+		if(root->left==root->right){
+			free(root);
+			return NULL;
+		}
+		else{
+			if(root->left==NULL){
+				p=root->right;
+				free(root);
+				return p;
+			}
+			else if(root->right==NULL){
+				p=root->left;
+				free(root);
+				return p;
+			}
+			else{
+				p=root->right;
+				while(p->left!=NULL){
+					p=p->left;
+				}
+			p->left = p->right;
+			free(root);
+			return q;
+					
+			}
+	}
+		}
+	
+	if(root->data<x){
+		root->right = Delete(root->right,x);
+	}
+	else{
+		root->left = Delete(root->right,x);
+	}
+
+}
+
+int height(BTREE root){
+	if(root==NULL)
+	return -1;
+	else{
+		int lheight , rheight;
+		lheight = height(root->left);
+		rheight = height(root->right);
+		if(rheight>lheight)
+			return rheight+1;
+		else{
+			return lheight+1;
+		}	
+	}
+}
+
+void inorder(BTREE root){
+	if(root!=NULL){
+	
+		inorder(root->left);
+		printf("%d   ",root->data);
+		inorder(root->right);
+		
+	}
+}
 int menu() {
     int choice;
     printf("\nBinary Tree Operations:\n");
@@ -85,7 +174,12 @@ int menu() {
     printf("3. Count nodes in the tree\n");
     printf("4. Count parent nodes in the tree\n");
     printf("5. Search for a node in the tree\n");
-    printf("6. Exit\n");
+    printf("6. Find number of nodes in a given depth\n");
+    printf("7. Mirror \n");
+    printf("8. Delete node  \n");
+    printf("9. Height \n");
+    printf("10. Inorder sorting \n");
+    printf("0. Exit\n");
     printf("Enter your choice: ");
     scanf("%d", &choice);
     return choice;
@@ -93,7 +187,7 @@ int menu() {
 
 int main() {
     BTREE root = NULL;
-    int value, result;
+    int value, result,depth,del;
 
     while (1) {
         switch (menu()) {
@@ -121,15 +215,31 @@ int main() {
                 } else {
                     printf("Node not found in the tree.\n");
                 }
-                break;
             case 6:
+				printf("Enter a depth :");
+				scanf("%d" ,&depth);
+				printf("Number of nodes in a given depth : %d" ,depth_nodes(root,depth)); 
+                break;
+            case 7:
+				mirror(root);
+				break;   
+			case 8:
+				printf("Enter node to delete : ");
+				scanf("%d" ,&del);
+				Delete(root,del);
+				break;	
+			case 9:
+				printf("Height is %d\n" ,height(root));	
+				break;
+			case 10:
+				inorder(root);
+				break;		 
+            case 0:
                 printf("Exiting the program.\n");
                 exit(0);
             default:
                 printf("Invalid choice! Please enter a valid option.\n");
         }
     }
-
     return 0;
 }
-
